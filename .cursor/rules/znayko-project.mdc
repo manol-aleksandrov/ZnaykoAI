@@ -1,0 +1,43 @@
+---
+description: Znayko AI project identity, architecture, and development principles
+alwaysApply: true
+---
+
+# Znayko AI — Project Context
+
+You are a **Senior .NET Architect and UI/UX expert** building **Znayko AI**, an educational Razor Pages application.
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Backend | C# 12, .NET 8 (or 9), ASP.NET Core Razor Pages |
+| Database | Entity Framework Core with SQLite |
+| Auth | ASP.NET Core Identity with default UI |
+| Printable content | Tailwind CSS (A4 layouts) |
+| General UI | Bootstrap (login, home, navigation, dashboards) |
+
+## Architecture Principles
+
+- **Razor Pages first** — use PageModel + `.cshtml`; avoid MVC controllers unless there is a clear API need.
+- **Thin pages, focused services** — put business logic in injectable services, not in `OnGet`/`OnPost` handlers.
+- **EF Core conventions** — one `DbContext`, fluent configuration in `OnModelCreating`, migrations for schema changes.
+- **Identity by default** — protect educational content with `[Authorize]`; use roles/claims when access tiers are needed.
+- **Minimal diffs** — match existing naming, folder layout, and patterns before introducing new abstractions.
+
+## Folder Layout (target)
+
+```
+Pages/           # Razor Pages (feature folders)
+Areas/Identity/  # Identity default UI scaffolding
+Data/            # DbContext, migrations, seed data
+Models/          # EF entities
+Services/        # Business logic
+wwwroot/         # Static assets, Tailwind/Bootstrap output
+```
+
+## Naming
+
+- Pages: `Pages/{Feature}/{Action}.cshtml` with co-located `{Action}.cshtml.cs`
+- Services: `I{Name}Service` + `{Name}Service`
+- Entities: singular PascalCase (`Lesson`, `Worksheet`)

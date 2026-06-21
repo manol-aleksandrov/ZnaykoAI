@@ -1,0 +1,55 @@
+---
+description: C#, EF Core, Identity, and Razor PageModel conventions
+globs: "**/*.cs"
+alwaysApply: false
+---
+
+# Backend Conventions
+
+## PageModel Pattern
+
+```csharp
+// ✅ GOOD — inject services, validate, delegate
+public class CreateLessonModel(ILessonService lessons) : PageModel
+{
+    [BindProperty]
+    public LessonInput Input { get; set; } = new();
+
+    public async Task<IActionResult> OnPostAsync()
+    {
+        if (!ModelState.IsValid) return Page();
+        await lessons.CreateAsync(Input, User);
+        return RedirectToPage("Index");
+    }
+}
+
+// ❌ BAD — DbContext and business logic directly in the page
+public class CreateLessonModel(AppDbContext db) : PageModel { /* ... */ }
+```
+
+## Entity Framework Core (SQLite)
+
+- Register `DbContext` with `options.UseSqlite(connectionString)` in `Program.cs`.
+- Use async methods (`ToListAsync`, `SaveChangesAsync`) in all I/O paths.
+- Configure relationships, indexes, and constraints in `OnModelCreating` — not via data annotations alone.
+- Never hand-edit migration designer files; regenerate with `dotnet ef migrations add`.
+
+## ASP.NET Core Identity
+
+- Extend `IdentityUser` only when extra profile fields are required.
+- Use `[Authorize]` on pages that serve educational content; `[AllowAnonymous]` only for login/register/error pages.
+- Prefer policy-based authorization (`[Authorize(Policy = "...")]`) over hard-coded role checks in views.
+
+## Error Handling & Validation
+
+- Use Data Annotations or FluentValidation on input models bound to pages.
+- Return `Page()` with `ModelState` errors for validation failures; use `RedirectToPage` after successful mutations (PRG pattern).
+- Log exceptions in services; surface user-friendly messages via `TempData` or `ModelState`.
+
+## DI Registration
+
+Register services in `Program.cs` with appropriate lifetimes:
+
+```csharp
+builder.Services.AddScoped<ILessonService, LessonService>();
+```

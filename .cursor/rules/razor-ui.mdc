@@ -1,0 +1,51 @@
+---
+description: Razor Pages markup, Tailwind A4 print layouts, and Bootstrap UI
+globs: "**/*.{cshtml,css}"
+alwaysApply: false
+---
+
+# UI & Razor Conventions
+
+## When to Use Which CSS Framework
+
+| Context | Framework | Notes |
+|---------|-----------|-------|
+| Worksheets, lessons, printable PDFs | **Tailwind CSS** | A4 page size (`w-[210mm]`, `min-h-[297mm]`), print utilities |
+| Login, register, home, nav, admin | **Bootstrap** | Use Identity default UI styles; extend with Bootstrap components |
+
+Do not mix Bootstrap utility classes into A4 printable layouts — keep print views Tailwind-only for predictable output.
+
+## A4 Printable Page Template
+
+```html
+<!-- Tailwind A4 content page -->
+<article class="mx-auto w-[210mm] min-h-[297mm] bg-white p-[20mm] print:shadow-none shadow-md">
+    <header class="mb-6 border-b pb-4">
+        <h1 class="text-2xl font-bold text-gray-900">@Model.Title</h1>
+    </header>
+    <section class="prose max-w-none">
+        @* educational content *@
+    </section>
+</article>
+```
+
+Add `@media print` rules or Tailwind `print:` variants to hide nav, buttons, and chrome when printing.
+
+## Bootstrap Application Shell
+
+- Use `_Layout.cshtml` with Bootstrap navbar, container, and responsive grid.
+- Keep Identity pages under `Areas/Identity/Pages` styled with Bootstrap (default scaffolding).
+- Use semantic HTML (`main`, `nav`, `article`) and accessible labels on all form inputs.
+
+## Razor Syntax
+
+- Prefer Tag Helpers (`asp-page`, `asp-for`, `asp-validation-summary`) over raw HTML forms.
+- Use partials (`_Partial.cshtml`) and View Components for reusable UI blocks.
+- Never put business logic in `.cshtml` — only display logic and trivial formatting.
+
+## UX Guidelines (Educational App)
+
+- Clear visual hierarchy: title → learning objective → content → exercises.
+- Generous whitespace and readable typography (16px+ body text on screen, 12pt+ on print).
+- Show progress, breadcrumbs, or section labels so learners know where they are.
+- Confirm destructive actions; provide success/error feedback via Bootstrap alerts or `TempData`.
