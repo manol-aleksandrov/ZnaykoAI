@@ -1,0 +1,106 @@
+@page
+@model ZnaykoAI.Pages.Quizzes.GenerateModel
+@{
+    ViewData["Title"] = "Generate Quiz";
+}
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="h2 mb-1">Generate Quiz</h1>
+            <p class="text-muted mb-4">
+                Test the AI integration. Generated quizzes are previewed here only — not saved yet.
+            </p>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <form method="post">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label asp-for="Input.Grade" class="form-label"></label>
+                                <input asp-for="Input.Grade" class="form-control" type="number" min="1" max="12" />
+                                <span asp-validation-for="Input.Grade" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.QuestionCount" class="form-label"></label>
+                                <input asp-for="Input.QuestionCount" class="form-control" type="number" min="1" max="50" />
+                                <span asp-validation-for="Input.QuestionCount" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="Input.AnswersPerQuestion" class="form-label"></label>
+                                <input asp-for="Input.AnswersPerQuestion" class="form-control" type="number" min="2" max="6" />
+                                <span asp-validation-for="Input.AnswersPerQuestion" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.Subject" class="form-label"></label>
+                                <input asp-for="Input.Subject" class="form-control" placeholder="e.g. Математика" />
+                                <span asp-validation-for="Input.Subject" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="Input.SubTopic" class="form-label"></label>
+                                <input asp-for="Input.SubTopic" class="form-control" placeholder="e.g. Дроби" />
+                                <span asp-validation-for="Input.SubTopic" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                Generate with AI
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @if (Model.Result is not null)
+            {
+                var sheet = Model.Result;
+
+                <div class="alert alert-success" role="alert">
+                    Integration succeeded — received @sheet.Questions.Count question(s) from OpenRouter.
+                </div>
+
+                <div class="card shadow-sm">
+                    <div class="card-header bg-white">
+                        <h2 class="h4 mb-1">@sheet.Title</h2>
+                        <p class="text-muted small mb-0">
+                            Grade @sheet.Grade · @sheet.Subject · @sheet.SubTopic
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <p class="small text-muted">
+                            Correct answers are highlighted below for integration verification only.
+                        </p>
+
+                        <ol class="list-group list-group-numbered">
+                            @foreach (var question in sheet.Questions)
+                            {
+                                <li class="list-group-item border-0 px-0 pb-4">
+                                    <p class="fw-semibold mb-2">@question.QuestionText</p>
+                                    <ul class="list-unstyled mb-0">
+                                        @foreach (var answer in question.Answers.OrderBy(a => a.SortOrder))
+                                        {
+                                            <li class="@(answer.IsCorrect ? "text-success fw-semibold" : "")">
+                                                @if (answer.IsCorrect)
+                                                {
+                                                    <span class="badge text-bg-success me-1">✓</span>
+                                                }
+                                                @answer.AnswerText
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            }
+                        </ol>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

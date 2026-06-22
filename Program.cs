@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ZnaykoAI.Data;
+using ZnaykoAI.Services;
+using ZnaykoAI.Services.OpenRouter;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,11 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddRazorPages();
+
+builder.Services.Configure<OpenRouterOptions>(
+    builder.Configuration.GetSection(OpenRouterOptions.SectionName));
+builder.Services.AddScoped<IQuizPromptProvider, QuizPromptProvider>();
+builder.Services.AddScoped<IQuizGenerationService, OpenRouterQuizService>();
 
 var app = builder.Build();
 
