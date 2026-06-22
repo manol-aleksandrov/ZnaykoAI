@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="~/ZnaykoAI.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
+    <header class="no-print">
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm">
             <div class="container">
                 <a class="navbar-brand fw-bold text-primary fs-4" asp-area="" asp-page="/Index">Znayko AI</a>
@@ -37,7 +37,7 @@
         @RenderBody()
     </main>
 
-    <footer class="border-top footer text-muted">
+    <footer class="border-top footer text-muted no-print">
         <div class="container">
             &copy; 2026 - Znayko AI - <a asp-area="" asp-page="/Privacy">Privacy</a>
         </div>

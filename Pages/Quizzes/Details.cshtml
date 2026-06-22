@@ -1,0 +1,140 @@
+@page
+@model ZnaykoAI.Pages.Quizzes.DetailsModel
+@{
+    ViewData["Title"] = Model.TestSheet!.Title;
+    var sheet = Model.TestSheet;
+    var optionLabels = new[] { "A", "B", "C", "D", "E", "F" };
+}
+
+<script>
+    tailwind.config = {
+        corePlugins: { preflight: false },
+        important: '#quiz-print-root'
+    };
+</script>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+    .print-area {
+        width: 210mm;
+        min-height: 297mm;
+        background-color: white;
+        color: black;
+    }
+
+    @@media print {
+        body {
+            margin: 0;
+            background: white;
+        }
+
+        .no-print {
+            display: none !important;
+        }
+
+        body * {
+            visibility: hidden;
+        }
+
+        .print-area,
+        .print-area * {
+            visibility: visible;
+        }
+
+        .print-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 210mm;
+            min-height: 297mm;
+            box-shadow: none;
+            page-break-after: always;
+        }
+
+        .quiz-header {
+            break-after: avoid;
+        }
+
+        .question-block {
+            break-inside: avoid;
+        }
+    }
+</style>
+
+<div class="container py-4 no-print">
+    @if (TempData["SuccessMessage"] is string successMessage)
+    {
+        <div class="alert alert-success" role="alert">
+            @successMessage
+        </div>
+    }
+
+    <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-4">
+        <div>
+            <h1 class="h2 mb-1">@sheet.Title</h1>
+            <p class="text-muted mb-0">
+                Grade @sheet.Grade · @sheet.Subject · @sheet.SubTopic
+            </p>
+            <p class="text-muted small mb-0">
+                Created @sheet.CreatedOn.ToLocalTime().ToString("g")
+            </p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-primary" onclick="window.print()">
+                Print
+            </button>
+            <a class="btn btn-outline-secondary" asp-page="/Quizzes/Generate">
+                Generate Another
+            </a>
+        </div>
+    </div>
+</div>
+
+<article id="quiz-print-root" class="print-area mx-auto max-w-[210mm] bg-white p-[10mm] shadow-md print:shadow-none">
+    <header class="quiz-header border-b border-gray-300 pb-4 mb-6">
+        <h1 class="text-2xl font-bold text-gray-900">@sheet.Title</h1>
+        <p class="mt-2 text-sm text-gray-600">
+            @sheet.Subject · @sheet.SubTopic · Grade @sheet.Grade
+        </p>
+        <p class="mt-4 text-sm text-gray-700">
+            Name: <span class="inline-block min-w-[140px] border-b border-gray-400">&nbsp;</span>
+            &nbsp;&nbsp;
+            Date: <span class="inline-block min-w-[100px] border-b border-gray-400">&nbsp;</span>
+        </p>
+    </header>
+
+    <ol class="space-y-6 list-none p-0 m-0">
+        @{
+            var questionNumber = 0;
+        }
+        @foreach (var question in sheet.Questions)
+        {
+            questionNumber++;
+            <li class="question-block">
+                <p class="font-semibold text-gray-900 mb-3">
+                    <span class="mr-2">@questionNumber.</span>
+                    @question.QuestionText
+                    @if (question.Points > 0)
+                    {
+                        <span class="text-sm font-normal text-gray-500">(@question.Points pt)</span>
+                    }
+                </p>
+                <ul class="space-y-2 list-none p-0 m-0 pl-6">
+                    @{
+                        var answerIndex = 0;
+                    }
+                    @foreach (var answer in question.Answers.OrderBy(a => a.SortOrder))
+                    {
+                        var label = answerIndex < optionLabels.Length
+                            ? optionLabels[answerIndex]
+                            : (answerIndex + 1).ToString();
+                        answerIndex++;
+                        <li class="flex items-start gap-2 text-sm text-gray-800">
+                            <span class="font-medium shrink-0">@label)</span>
+                            <span>@answer.AnswerText</span>
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ol>
+</article>

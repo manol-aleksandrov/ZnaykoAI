@@ -20,6 +20,7 @@ builder.Services.Configure<OpenRouterOptions>(
     builder.Configuration.GetSection(OpenRouterOptions.SectionName));
 builder.Services.AddScoped<IQuizPromptProvider, QuizPromptProvider>();
 builder.Services.AddScoped<IQuizGenerationService, OpenRouterQuizService>();
+builder.Services.AddScoped<ITestSheetService, TestSheetService>();
 
 var app = builder.Build();
 

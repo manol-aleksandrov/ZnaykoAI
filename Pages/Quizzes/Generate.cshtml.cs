@@ -2,19 +2,18 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using ZnaykoAI.Models;
 using ZnaykoAI.Services;
 using ZnaykoAI.Services.Exceptions;
 
 namespace ZnaykoAI.Pages.Quizzes;
 
 [Authorize]
-public class GenerateModel(IQuizGenerationService quizGeneration) : PageModel
+public class GenerateModel(
+    IQuizGenerationService quizGeneration,
+    ITestSheetService testSheets) : PageModel
 {
     [BindProperty]
     public GenerateQuizInput Input { get; set; } = new();
-
-    public TestSheet? Result { get; set; }
 
     public void OnGet()
     {
@@ -35,7 +34,7 @@ public class GenerateModel(IQuizGenerationService quizGeneration) : PageModel
 
         try
         {
-            Result = await quizGeneration.GenerateQuizAsync(
+            var sheet = await quizGeneration.GenerateQuizAsync(
                 userId,
                 Input.Grade,
                 Input.Subject,
@@ -43,6 +42,13 @@ public class GenerateModel(IQuizGenerationService quizGeneration) : PageModel
                 Input.QuestionCount,
                 Input.AnswersPerQuestion,
                 HttpContext.RequestAborted);
+
+            await testSheets.SaveAsync(sheet, HttpContext.RequestAborted);
+
+            TempData["SuccessMessage"] =
+                $"Quiz \"{sheet.Title}\" was generated successfully with {sheet.Questions.Count} question(s).";
+
+            return RedirectToPage("Details", new { id = sheet.Id });
         }
         catch (QuizGenerationException ex)
         {
