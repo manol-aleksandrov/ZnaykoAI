@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .print-area {
+            width: 210mm;
+            min-height: 297mm;
+            background-color: white;
+            color: black;
+        }
+
+        @@media print {
+            body {
+                margin: 0;
+                background: white;
+            }
+
+            body * {
+                visibility: hidden;
+            }
+
+            .print-area,
+            .print-area * {
+                visibility: visible;
+            }
+
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 210mm;
+                min-height: 297mm;
+                box-shadow: none;
+                page-break-after: always;
+            }
+
+            .quiz-header {
+                break-after: avoid;
+            }
+
+            .question-block {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-black">
+    <article class="print-area mx-auto bg-white p-[15mm] shadow-md print:shadow-none">
+        @RenderBody()
+    </article>
+</body>
+</html>

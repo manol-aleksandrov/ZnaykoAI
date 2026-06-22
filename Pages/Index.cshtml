@@ -1,10 +1,17 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<section class="py-5 text-center bg-light">
+    <div class="container">
+        <h1 class="display-4 fw-bold mb-3">AI-Powered Practice for Students</h1>
+        <p class="lead col-lg-8 mx-auto mb-4 text-secondary">
+            Znayko AI generates tailored quizzes on any subject and topic — instantly.
+            Build printable A4 test sheets with multiple-choice questions powered by a dynamic quiz engine,
+            so students can practice smarter and teachers can save time.
+        </p>
+        <a class="btn btn-primary btn-lg px-4" asp-area="Identity" asp-page="/Account/Register">Get Started</a>
+    </div>
+</section>
