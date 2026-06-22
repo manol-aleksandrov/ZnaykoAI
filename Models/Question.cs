@@ -8,9 +8,9 @@ public class Question
 
     public string QuestionText { get; set; } = string.Empty;
 
-    public string CorrectAnswer { get; set; } = string.Empty;
-
     public int Points { get; set; }
 
     public TestSheet TestSheet { get; set; } = null!;
+
+    public ICollection<Answer> Answers { get; set; } = [];
 }

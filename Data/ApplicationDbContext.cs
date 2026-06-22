@@ -15,6 +15,8 @@ public class ApplicationDbContext : IdentityDbContext
 
     public DbSet<Question> Questions => Set<Question>();
 
+    public DbSet<Answer> Answers => Set<Answer>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -59,9 +61,21 @@ public class ApplicationDbContext : IdentityDbContext
                 .IsRequired()
                 .HasMaxLength(2000);
 
-            entity.Property(q => q.CorrectAnswer)
+            entity.HasMany(q => q.Answers)
+                .WithOne(a => a.Question)
+                .HasForeignKey(a => a.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<Answer>(entity =>
+        {
+            entity.HasKey(a => a.Id);
+
+            entity.Property(a => a.AnswerText)
                 .IsRequired()
                 .HasMaxLength(500);
+
+            entity.HasIndex(a => new { a.QuestionId, a.SortOrder });
         });
     }
 }

@@ -8,6 +8,8 @@ public class TestSheet
 
     public int Grade { get; set; }
 
+    public int AnswerCount { get; set; }
+
     public string Title { get; set; } = string.Empty;
 
     public string Subject { get; set; } = string.Empty;
