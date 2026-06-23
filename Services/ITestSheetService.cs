@@ -10,4 +10,13 @@ public interface ITestSheetService
         Guid id,
         string userId,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<TestSheet>> GetAllForUserAsync(
+        string userId,
+        CancellationToken cancellationToken = default);
+
+    Task<bool> DeleteForUserAsync(
+        Guid id,
+        string userId,
+        CancellationToken cancellationToken = default);
 }
